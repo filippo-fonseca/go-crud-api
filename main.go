@@ -33,14 +33,21 @@ func getMovies(w http.ResponseWriter, r *http.Request) {
 func deleteMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	params := mux.Vars(r)
+	movieFound := false
+
 	for index, item := range movies {
 		if item.ID == params["id"] {
 			movies = append(movies[:index], movies[index+1:]...)
+			movieFound = true
 			break
 		}
 	}
-
-	json.NewEncoder(w).Encode(movies)
+	
+	if (movieFound) {
+		json.NewEncoder(w).Encode(movies)
+	} else {
+		json.NewEncoder(w).Encode("No movie found! Sorry.")
+	}
 }
 
 func getMovie(w http.ResponseWriter, r *http.Request) {
@@ -72,6 +79,8 @@ func createMovie(w http.ResponseWriter, r *http.Request) {
 func updateMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	params := mux.Vars(r)
+	movieFound := false
+
 	for index, item := range movies {
 		if item.ID == params["id"] {
 			movies = append(movies[:index], movies[index+1:]...)
@@ -80,8 +89,13 @@ func updateMovie(w http.ResponseWriter, r *http.Request) {
 			movie.ID = params["id"]
 			movies = append(movies, movie)
 			json.NewEncoder(w).Encode(movie)
+			movieFound = true
 			return
 		}
+	}
+
+	if !movieFound {
+		json.NewEncoder(w).Encode("No movie found! Sorry, mate.")
 	}
 }
 

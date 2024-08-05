@@ -45,12 +45,18 @@ func deleteMovie(w http.ResponseWriter, r *http.Request) {
 
 func getMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
+	success := false
 	params := mux.Vars(r)
 	for _, item := range movies {
 		if item.ID == params["id"] {
 			json.NewEncoder(w).Encode(item)
+			success = true
 			return
 		}
+	}
+
+	if !success {
+		json.NewEncoder(w).Encode("No movie found! Sorry.")
 	}
 }
 
